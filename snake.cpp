@@ -7,12 +7,18 @@
 
 struct Render
 {
+public:
     Render(size_t width = 10, size_t height = 10, double fps = 10.0);
     void show();
+    void addObjects()
+    {
+    }
 
     std::vector<std::vector<char>> m_data;
 
 private:
+    void pause(size_t delay) const;
+
     std::ofstream m_out;
     double m_FPS;
     size_t m_width;
@@ -20,12 +26,7 @@ private:
     size_t m_frame_counter;
 
     std::string m_file_name;
-    char m_base_symbol = '.';
-
-    void pause(size_t delay) const
-    {
-        std::this_thread::sleep_for(std::chrono::milliseconds(delay));
-    }
+    char m_base_symbol;
 };
 
 int main()
@@ -35,7 +36,8 @@ int main()
     size_t height = 30;
     Render window = Render(width, height, FPS);
 
-    for (size_t i = 0; i < 100; ++i)
+    bool isPlay = true;
+    for (; isPlay;)
     {
         window.show();
     }
@@ -49,6 +51,7 @@ Render::Render(size_t width, size_t height, double fps)
 {
     m_frame_counter = 0;
     m_file_name     = "frame.txt";
+    m_base_symbol   = '.';
 
     m_data.resize(height);
     for (auto& row : m_data)
@@ -79,4 +82,9 @@ void Render::show()
 
     m_out.close();
     pause((1 / m_FPS) * 1000); // in milliseconds
+}
+
+void Render::pause(size_t delay) const
+{
+    std::this_thread::sleep_for(std::chrono::milliseconds(delay));
 }
