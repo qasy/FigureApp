@@ -9,13 +9,13 @@ double Point3D::getX() const { return x; }
 double Point3D::getY() const { return y; }
 double Point3D::getZ() const { return z; }
 
-void Point3D::printXYZ()
+void Point3D::printXYZ() const
 {
     std::cout << "x:\t" << x << " y:\t" << y << " z:\t" << z << std::endl;
 }
 // clang-format on
 
-Shape::Shape(Point3D center, std::vector<Point3D> const& tops)
+Shape::Shape(Point3D center, const std::vector<Point3D>& tops)
     : center(center)
     , tops(tops)
 {
@@ -38,7 +38,7 @@ const std::vector<Point3D>& Shape::getTops() const
     return tops;
 }
 
-void Shape::setTop(size_t number, Point3D const& new_value)
+void Shape::setTop(size_t number, const Point3D& new_value)
 {
     if (number < tops.size())
     {

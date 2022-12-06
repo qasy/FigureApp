@@ -13,7 +13,7 @@ struct Point3D
     double getY() const;
     double getZ() const;
 
-    void printXYZ();
+    void printXYZ() const;
 
 private:
     double x;
@@ -23,13 +23,13 @@ private:
 
 struct Shape
 {
-    Shape(Point3D center = Point3D(0, 0, 0), std::vector<Point3D> const& tops = {});
+    Shape(Point3D center = Point3D(0, 0, 0), const std::vector<Point3D>& tops = {});
 
     void printTops();
 
     const std::vector<Point3D>& getTops() const;
 
-    void setTop(size_t number, Point3D const& new_value);
+    void setTop(size_t number, const Point3D& new_value);
     void setTops(const std::vector<Point3D>& new_tops);
 
 private:

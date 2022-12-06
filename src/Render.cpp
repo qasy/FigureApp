@@ -1,4 +1,5 @@
 #include "Render.h"
+#include <iostream>
 #include <thread>
 
 Render::Render(size_t width, size_t height, size_t depth, double fps)
@@ -23,7 +24,7 @@ Render::Render(size_t width, size_t height, size_t depth, double fps)
     }
 }
 
-size_t Render::getPxlValue(size_t i, size_t j)
+size_t Render::getPxl(size_t i, size_t j)
 {
     // if (m_pxls.at(i))
     // {
@@ -33,54 +34,78 @@ size_t Render::getPxlValue(size_t i, size_t j)
     return 0;
 }
 
-void Render::addShapes(Shape* s)
+void Render::setPxl(size_t i, size_t j, size_t value)
 {
-    // shapes.push_back(s);
+    if (i >= 0 && i < m_pxls.size())
+    {
+        if (j >= 0 && j < m_pxls[i].size())
+        {
+            m_pxls[i][j] = value;
+            std::cout << "m_pxls[i][j]: " << i << " " << j << " " << value << std::endl;
+        }
+    }
+}
+
+void Render::addShapes(Shape* shape)
+{
+    for (Shape* s : shapes)
+    {
+        if (s == shape)
+        {
+            return;
+        }
+    }
+    shapes.push_back(shape);
 }
 
 void Render::printShapes()
 {
-    // std::cout << "Shapes: " << shapes.size() << std::endl;
-    // for (Shape* shape : shapes)
-    // {
-    //     shape->printTops();
-    // }
+    std::cout << "Shapes: " << shapes.size() << std::endl;
+    for (Shape* shape : shapes)
+    {
+        shape->printTops();
+    }
 }
 
 void Render::update()
 {
-    // for (auto shape : shapes)
-    // {
-    //     for (auto top : shape->getTops())
-    //     {
-    //         double x = top.getX();
-    //         double y = top.getY();
-    //         double z = top.getZ();
-    //     }
-    // }
+    for (Shape* shape : shapes)
+    {
+        for (const Point3D& top : shape->getTops())
+        {
+            top.printXYZ();
+            double x = top.getX();
+            double y = top.getY();
+            double z = top.getZ();
+
+            setPxl(x, y, z);
+        }
+    }
 }
 
 void Render::show()
 {
-    // m_out.open(m_file_name, std::ios::out | std::ios::trunc);
+    m_out.open(m_file_name, std::ios::out | std::ios::trunc);
 
-    // for (auto& row : m_pxls)
-    // {
-    //     for (auto& point : row)
-    //     {
-    //         m_out << point << ' ';
-    //     }
-    //     m_out << std::endl;
-    // }
+    for (auto& row : m_pxls)
+    {
+        for (auto& point : row)
+        {
+            m_out << point << ' ';
+        }
+        m_out << std::endl;
+    }
 
-    // m_out << "Frame: " << m_frame_counter;
-    // ++m_frame_counter;
+    // display stats
+    m_out << "Frame: " << m_frame_counter;
+    ++m_frame_counter;
 
-    // m_out.close();
-    // pause((1 / m_FPS) * 1000); // in milliseconds
+    m_out.close();
+    pause(1 / m_FPS);
 }
 
-void Render::pause(size_t delay) const
+void Render::pause(double seconds) const
 {
-    // std::this_thread::sleep_for(std::chrono::milliseconds(delay));
+    // milliseconds -> seconds
+    std::this_thread::sleep_for(std::chrono::milliseconds((int)(seconds * 1000)));
 }
