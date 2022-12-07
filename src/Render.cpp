@@ -2,24 +2,28 @@
 #include <iostream>
 #include <thread>
 
-Render::Render(size_t width, size_t height, size_t depth, double fps)
+Render::Render(size_t width, size_t height, double fps)
     : m_max_width(width)
     , m_max_height(height)
-    , m_max_depth(depth)
     , m_FPS(fps)
 
 {
     m_frame_counter = 0;
-    m_file_name     = "frame.txt";
-    m_base_symbol   = 0;
+    m_file_name     = "../frame.txt";
 
+    m_pxls_code = {'@', 'G', 'Q', 'O', 'o', '+', ':', ',', '.', ' '};
+    m_max_depth = m_pxls_code.size() - 1;
+
+    m_depth_map.resize(height);
     m_pxls.resize(height);
-    for (auto& row : m_pxls)
+    for (size_t i = 0; i < m_depth_map.size(); ++i)
     {
-        row.resize(width);
-        for (auto& point : row)
+        m_depth_map[i].resize(width);
+        m_pxls[i].resize(width);
+        for (size_t j = 0; j < m_depth_map[i].size(); ++j)
         {
-            point = m_base_symbol;
+            m_depth_map[i][j] = m_max_depth;
+            m_pxls[i][j]      = m_pxls_code[m_max_depth];
         }
     }
 }
@@ -41,7 +45,6 @@ void Render::setPxl(size_t i, size_t j, size_t value)
         if (j >= 0 && j < m_pxls[i].size())
         {
             m_pxls[i][j] = value;
-            std::cout << "m_pxls[i][j]: " << i << " " << j << " " << value << std::endl;
         }
     }
 }
@@ -73,10 +76,18 @@ void Render::update()
     {
         for (const Point3D& top : shape->getTops())
         {
-            top.printXYZ();
+            // top.printXYZ();
             double x = top.getX();
             double y = top.getY();
             double z = top.getZ();
+            int i    = (int)x;
+            int j    = (int)y;
+            int d    = (int)z;
+            if (i >= 0 && i < m_max_height && j >= 0 && j < m_max_width)
+            {
+                m_depth_map[i][j] = z;
+                m_pxls[i][j] = d;
+            }
 
             setPxl(x, y, z);
         }

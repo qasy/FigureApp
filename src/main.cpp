@@ -13,8 +13,7 @@ int main()
     double FPS    = 20;
     size_t width  = 30;
     size_t height = 30;
-    size_t depth  = 30;
-    Render window = Render(width, height, depth, FPS);
+    Render window = Render(width, height, FPS);
 
     Point3D pc;
     Point3D p1(2, 0, 5);
@@ -32,9 +31,9 @@ int main()
     window.addShapes(triangle2);
 
     // window.printShapes();
-    window.show();
-    window.update();
-    window.show();
+    // window.show();
+    // window.update();
+    // window.show();
 
     delete triangle1;
     triangle1 = nullptr;
@@ -42,9 +41,9 @@ int main()
     delete triangle2;
     triangle2 = nullptr;
 
-    //     bool isPlay = true;
-    // for (; isPlay;)
-    // {
-    // window.show();
-    // }
+    bool isPlay = true;
+    for (; isPlay;)
+    {
+        window.show();
+    }
 }
