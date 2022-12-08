@@ -15,11 +15,8 @@ public:
 
     void printShapes();
 
-    void setPxl(size_t i, size_t j, size_t value);
-    size_t getPxl(size_t i, size_t j);
-
-    std::vector<std::vector<char>> m_pxls;
-    std::vector<std::vector<double>> m_depth_map;
+    std::vector<double> m_depth_map;
+    std::vector<char> m_pxls;
 
 private:
     void pause(double seconds) const;
@@ -30,6 +27,7 @@ private:
     size_t m_max_width;
     size_t m_max_height;
     size_t m_max_depth;
+    size_t m_size;
     double m_FPS;
     size_t m_frame_counter;
 

@@ -12,40 +12,17 @@ Render::Render(size_t width, size_t height, double fps)
     m_file_name     = "../frame.txt";
 
     m_pxls_code = {'@', 'G', 'Q', 'O', 'o', '+', ':', ',', '.', ' '};
-    m_max_depth = m_pxls_code.size() - 1;
 
-    m_depth_map.resize(height);
-    m_pxls.resize(height);
-    for (size_t i = 0; i < m_depth_map.size(); ++i)
+    m_max_depth = m_pxls_code.size();
+    m_size      = m_max_width * m_max_height;
+
+    m_depth_map.resize(m_size);
+    m_pxls.resize(m_size);
+
+    for (size_t i = 0; i < m_size; ++i)
     {
-        m_depth_map[i].resize(width);
-        m_pxls[i].resize(width);
-        for (size_t j = 0; j < m_depth_map[i].size(); ++j)
-        {
-            m_depth_map[i][j] = m_max_depth;
-            m_pxls[i][j]      = m_pxls_code[m_max_depth];
-        }
-    }
-}
-
-size_t Render::getPxl(size_t i, size_t j)
-{
-    // if (m_pxls.at(i))
-    // {
-
-    //     auto row = m_pxls[i];
-    // }
-    return 0;
-}
-
-void Render::setPxl(size_t i, size_t j, size_t value)
-{
-    if (i >= 0 && i < m_pxls.size())
-    {
-        if (j >= 0 && j < m_pxls[i].size())
-        {
-            m_pxls[i][j] = value;
-        }
+        m_depth_map[i] = m_max_depth - 1;
+        m_pxls[i]      = m_pxls_code[m_max_depth - 1];
     }
 }
 
@@ -72,24 +49,25 @@ void Render::printShapes()
 
 void Render::update()
 {
+    for (size_t i = 0; i < m_size; ++i)
+    {
+        m_depth_map[i] = m_max_depth - 1;
+    }
     for (Shape* shape : shapes)
     {
-        for (const Point3D& top : shape->getTops())
+        for (const Point3D& top : shape->getGlobalTops())
         {
             // top.printXYZ();
-            double x = top.getX();
-            double y = top.getY();
-            double z = top.getZ();
-            int i    = (int)x;
-            int j    = (int)y;
-            int d    = (int)z;
-            if (i >= 0 && i < m_max_height && j >= 0 && j < m_max_width)
-            {
-                m_depth_map[i][j] = z;
-                m_pxls[i][j] = d;
-            }
+            double x = top.x;
+            double y = top.y;
+            double z = top.z;
+            int row  = (int)x;
+            int col  = (int)y;
 
-            setPxl(x, y, z);
+            if (row >= 0 && row < m_max_height && col >= 0 && col < m_max_width)
+            {
+                m_depth_map[row * m_max_width + col] = z;
+            }
         }
     }
 }
@@ -98,13 +76,17 @@ void Render::show()
 {
     m_out.open(m_file_name, std::ios::out | std::ios::trunc);
 
-    for (auto& row : m_pxls)
+    for (size_t i = 0; i < m_size; ++i)
     {
-        for (auto& point : row)
+        int depth_value    = (int)m_depth_map[i];
+        bool inRenderRange = (depth_value >= 0 && depth_value < m_max_depth);
+        m_pxls[i]          = inRenderRange ? m_pxls_code[depth_value] : m_pxls_code[m_max_depth - 1];
+
+        m_out << m_pxls[i] << ' ';
+        if (i % m_max_width == m_max_width - 1)
         {
-            m_out << point << ' ';
+            m_out << std::endl;
         }
-        m_out << std::endl;
     }
 
     // display stats

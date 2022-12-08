@@ -9,30 +9,28 @@ struct Point3D
 {
     Point3D(double x = 0.0, double y = 0.0, double z = 0.0);
 
-    double getX() const;
-    double getY() const;
-    double getZ() const;
-
     void printXYZ() const;
-
-private:
     double x;
     double y;
     double z;
+
+private:
 };
 
 struct Shape
 {
-    Shape(Point3D center = Point3D(0, 0, 0), const std::vector<Point3D>& tops = {});
+    Shape(Point3D center = Point3D(0, 0, 0), const std::vector<Point3D>& local_tops = {});
+
+    void shiftCenter(const Point3D& new_point3d);
 
     void printTops();
 
-    const std::vector<Point3D>& getTops() const;
+    std::vector<Point3D> getGlobalTops() const;
 
     void setTop(size_t number, const Point3D& new_value);
     void setTops(const std::vector<Point3D>& new_tops);
 
 private:
-    Point3D center;
-    std::vector<Point3D> tops;
+    Point3D m_center;
+    std::vector<Point3D> m_local_tops;
 };
