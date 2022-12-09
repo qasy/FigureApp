@@ -11,7 +11,7 @@ Render::Render(size_t width, size_t height, double fps)
     m_frame_counter = 0;
     m_file_name     = "../frame.txt";
 
-    m_pxls_code = {'@', 'G', 'Q', 'O', 'o', '+', ':', ',', '.', '-'};
+    m_pxls_code = {'@', 'G', 'Q', 'O', 'o', '+', ':', ',', '.', ' '};
 
     m_max_depth = m_pxls_code.size();
     m_size      = m_max_width * m_max_height;
@@ -66,7 +66,7 @@ void Render::update()
     {
         for (const Point3D& top : shape->getGlobalTops())
         {
-            top.printXYZ();
+            // top.printXYZ();
             double x = top.x;
             double y = top.y;
             double z = top.z;
@@ -75,7 +75,10 @@ void Render::update()
 
             if (row >= 0 && row < m_max_height && col >= 0 && col < m_max_width)
             {
-                m_depth_map[row][col] = z;
+                if (z < m_depth_map[row][col])
+                {
+                    m_depth_map[row][col] = z;
+                }
             }
         }
     }

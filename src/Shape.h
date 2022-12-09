@@ -29,7 +29,9 @@ struct Shape
     void setCenter(const Point3D& new_point);
     void shiftCenter(const Point3D& bias);
 
-    void rotateAroundPoint()
+    void rotateAroundX(double angle);
+    void rotateAroundY(double angle);
+    void rotateAroundZ(double angle);
 
     void setTop(size_t number, const Point3D& new_value);
     void setTops(const std::vector<Point3D>& new_tops);

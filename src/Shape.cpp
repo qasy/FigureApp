@@ -1,4 +1,5 @@
 #include "Shape.h"
+#include <cmath>
 #include <iostream>
 #include <vector>
 
@@ -59,6 +60,42 @@ void Shape::shiftCenter(const Point3D& bias)
     m_center.x = m_center.x + bias.x;
     m_center.y = m_center.y + bias.y;
     m_center.z = m_center.z + bias.z;
+}
+
+void Shape::rotateAroundX(double angle)
+{
+    for (size_t i = 0; i < m_local_tops.size(); ++i)
+    {
+        double new_y = cos(angle) * m_local_tops[i].y - sin(angle) * m_local_tops[i].z;
+        double new_z = sin(angle) * m_local_tops[i].y + cos(angle) * m_local_tops[i].z;
+
+        m_local_tops[i].y = new_y;
+        m_local_tops[i].z = new_z;
+    }
+}
+
+void Shape::rotateAroundY(double angle)
+{
+    for (size_t i = 0; i < m_local_tops.size(); ++i)
+    {
+        double new_x = cos(angle) * m_local_tops[i].x + sin(angle) * m_local_tops[i].z;
+        double new_z = -sin(angle) * m_local_tops[i].x + cos(angle) * m_local_tops[i].z;
+
+        m_local_tops[i].y = new_x;
+        m_local_tops[i].z = new_z;
+    }
+}
+
+void Shape::rotateAroundZ(double angle)
+{
+    for (size_t i = 0; i < m_local_tops.size(); ++i)
+    {
+        double new_x = cos(angle) * m_local_tops[i].x - sin(angle) * m_local_tops[i].y;
+        double new_y = sin(angle) * m_local_tops[i].x + cos(angle) * m_local_tops[i].y;
+
+        m_local_tops[i].x = new_x;
+        m_local_tops[i].y = new_y;
+    }
 }
 
 void Shape::setTop(size_t number, const Point3D& new_value)
