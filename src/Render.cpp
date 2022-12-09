@@ -11,18 +11,22 @@ Render::Render(size_t width, size_t height, double fps)
     m_frame_counter = 0;
     m_file_name     = "../frame.txt";
 
-    m_pxls_code = {'@', 'G', 'Q', 'O', 'o', '+', ':', ',', '.', ' '};
+    m_pxls_code = {'@', 'G', 'Q', 'O', 'o', '+', ':', ',', '.', '-'};
 
     m_max_depth = m_pxls_code.size();
     m_size      = m_max_width * m_max_height;
 
-    m_depth_map.resize(m_size);
-    m_pxls.resize(m_size);
-
-    for (size_t i = 0; i < m_size; ++i)
+    m_depth_map.resize(m_max_height);
+    m_pxls.resize(m_max_height);
+    for (size_t i = 0; i < m_max_height; ++i)
     {
-        m_depth_map[i] = m_max_depth - 1;
-        m_pxls[i]      = m_pxls_code[m_max_depth - 1];
+        m_depth_map[i].resize(m_max_width);
+        m_pxls[i].resize(m_max_width);
+        for (size_t j = 0; j < m_max_width; ++j)
+        {
+            m_depth_map[i][j] = m_max_depth - 1;
+            m_pxls[i][j]      = m_pxls_code[m_max_depth - 1];
+        }
     }
 }
 
@@ -49,15 +53,20 @@ void Render::printShapes()
 
 void Render::update()
 {
-    for (size_t i = 0; i < m_size; ++i)
+    for (size_t i = 0; i < m_max_height; ++i)
     {
-        m_depth_map[i] = m_max_depth - 1;
+        m_depth_map[i].resize(m_max_width);
+        for (size_t j = 0; j < m_max_width; ++j)
+        {
+            m_depth_map[i][j] = m_max_depth - 1;
+        }
     }
+
     for (Shape* shape : shapes)
     {
         for (const Point3D& top : shape->getGlobalTops())
         {
-            // top.printXYZ();
+            top.printXYZ();
             double x = top.x;
             double y = top.y;
             double z = top.z;
@@ -66,7 +75,7 @@ void Render::update()
 
             if (row >= 0 && row < m_max_height && col >= 0 && col < m_max_width)
             {
-                m_depth_map[row * m_max_width + col] = z;
+                m_depth_map[row][col] = z;
             }
         }
     }
@@ -76,17 +85,18 @@ void Render::show()
 {
     m_out.open(m_file_name, std::ios::out | std::ios::trunc);
 
-    for (size_t i = 0; i < m_size; ++i)
+    for (size_t i = 0; i < m_max_height; ++i)
     {
-        int depth_value    = (int)m_depth_map[i];
-        bool inRenderRange = (depth_value >= 0 && depth_value < m_max_depth);
-        m_pxls[i]          = inRenderRange ? m_pxls_code[depth_value] : m_pxls_code[m_max_depth - 1];
-
-        m_out << m_pxls[i] << ' ';
-        if (i % m_max_width == m_max_width - 1)
+        for (size_t j = 0; j < m_max_width; ++j)
         {
-            m_out << std::endl;
+            int depth_value    = (int)m_depth_map[i][j];
+            bool inRenderRange = (depth_value >= 0 && depth_value < m_max_depth);
+            m_pxls[i][j]       = inRenderRange ? m_pxls_code[depth_value] : m_pxls_code[m_max_depth - 1];
+
+            m_out << m_pxls[i][j] << ' ';
         }
+
+        m_out << std::endl;
     }
 
     // display stats

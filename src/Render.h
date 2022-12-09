@@ -15,8 +15,8 @@ public:
 
     void printShapes();
 
-    std::vector<double> m_depth_map;
-    std::vector<char> m_pxls;
+    std::vector<std::vector<double>> m_depth_map;
+    std::vector<std::vector<char>> m_pxls;
 
 private:
     void pause(double seconds) const;
